@@ -24,21 +24,30 @@ class Car {
         const points = [];
         // hypot(x, y) = sqrt(x^2 + y^2)
         const rad = Math.hypot(this.width, this.height) / 2;
-        // alpha(y, x):  get the angle of the vector (x, y) and the x-axis
-        // https://zh.wikipedia.org/wiki/Atan2
+        /*  alpha(y, x):  get the angle of the vector (x, y) and the x-axis
+         *  _width_
+         *  |  |a/|
+         *  |  |/ | height
+         *  |     |
+         *  |_____|
+         */
         const alpha = Math.atan2(this.width, this.height);
+        // top-right point
         points.push({
             x: this.x - rad * Math.sin(this.angle - alpha),
             y: this.y - rad * Math.cos(this.angle - alpha)
         });
+        // top-left point
         points.push({
             x: this.x - rad * Math.sin(this.angle + alpha),
             y: this.y - rad * Math.cos(this.angle + alpha)
         });
+        // bottom-left point
         points.push({
             x: this.x - rad * Math.sin(Math.PI + this.angle - alpha),
             y: this.y - rad * Math.cos(Math.PI + this.angle - alpha)
         });
+        // bottom-right point
         points.push({
             x: this.x - rad * Math.sin(Math.PI + this.angle + alpha),
             y: this.y - rad * Math.cos(Math.PI + this.angle + alpha)
