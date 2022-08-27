@@ -23,7 +23,6 @@ class Road {
 
     getLaneCenter(laneIndex) {
         const laneWidth = this.width / this.laneCount;
-
         // Limit the position not out of lanes
         return this.left + laneWidth / 2 +
         Math.min(laneIndex, this.laneCount - 1) * laneWidth;
@@ -48,10 +47,10 @@ class Road {
             ctx.stroke();
         }
         ctx.setLineDash([]);
-        this.borders.forEach(border=>{
+        this.borders.forEach(border => {
             ctx.beginPath();
-            ctx.moveTo(border[0].x,border[0].y);
-            ctx.lineTo(border[1].x,border[1].y);
+            ctx.moveTo(border[0].x, border[0].y);
+            ctx.lineTo(border[1].x, border[1].y);
             ctx.stroke();
         });
     }

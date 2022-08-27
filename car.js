@@ -16,7 +16,35 @@ class Car {
 
     update(roadBorders) {
         this.#move();
+        this.polygon = this.#createPolygon();
         this.sensor.update(roadBorders);
+    }
+
+    #createPolygon() {
+        const points = [];
+        // hypot(x, y) = sqrt(x^2 + y^2)
+        const rad = Math.hypot(this.width, this.height) / 2;
+        // alpha(y, x):  get the angle of the vector (x, y) and the x-axis
+        // https://zh.wikipedia.org/wiki/Atan2
+        const alpha = Math.atan2(this.width, this.height);
+        points.push({
+            x: this.x - rad * Math.sin(this.angle - alpha),
+            y: this.y - rad * Math.cos(this.angle - alpha)
+        });
+        points.push({
+            x: this.x - rad * Math.sin(this.angle + alpha),
+            y: this.y - rad * Math.cos(this.angle + alpha)
+        });
+        points.push({
+            x: this.x - rad * Math.sin(Math.PI + this.angle - alpha),
+            y: this.y - rad * Math.cos(Math.PI + this.angle - alpha)
+        });
+        points.push({
+            x: this.x - rad * Math.sin(Math.PI + this.angle + alpha),
+            y: this.y - rad * Math.cos(Math.PI + this.angle + alpha)
+        });
+
+        return points;
     }
 
     #move() {
@@ -58,25 +86,14 @@ class Car {
     }
 
     draw(ctx) {
-        ctx.save()
-        // Remaps the (0,0) position on the canvas
-        ctx.translate(this.x, this.y);
-
-        ctx.rotate(-this.angle);
-        // Begins a path, or resets the current path
         ctx.beginPath();
-        // x, y, rectangle width, rectangle height
-        ctx.rect(
-            -this.width / 2,
-            -this.height / 2,
-            this.width,
-            this.height
-        );
-        // Fills the current drawing (path)
-        ctx.fill();
+        ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
 
-        ctx.restore();
+        for(let i = 1; i < this.polygon.length; i++) {
+            ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
+        }
+        ctx.fill()
         this.sensor.draw(ctx);
-
     }
 }
+

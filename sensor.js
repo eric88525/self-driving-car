@@ -15,7 +15,8 @@ class Sensor {
         this.readings = [];
         for (let i = 0; i < this.rays.length; i++) {
             this.readings.push(
-                this.#getReading(this.rays[i], roadBorders)
+                this.#getReading(
+                    this.rays[i], roadBorders)
             );
         }
     }
@@ -93,9 +94,8 @@ class Sensor {
                 end.y
             );
             ctx.stroke();
-
-            // ---
-
+            
+            // draw black line
             ctx.beginPath();
             ctx.lineWidth = 2;
             ctx.strokeStyle = "black";
