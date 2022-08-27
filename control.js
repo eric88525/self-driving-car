@@ -7,7 +7,7 @@ class Controls {
 
         this.#addKeyboardListeners();
     }
-    // private method
+    // get keyboard input
     #addKeyboardListeners() {
         document.onkeydown = (event) => {
             switch (event.key) {
