@@ -13,17 +13,17 @@ const car = new Car(road.getLaneCenter(1), 100, 30, 50);
 animate();
 
 function animate() {
-    car.update();
+    car.update(road.borders);
     canvas.height = window.innerHeight;
 
+    // Saves the state of the current context
+    ctx.save();
     // Let the car stay in the center
     ctx.translate(0, -car.y + canvas.height*0.5);
 
     road.draw(ctx);
     car.draw(ctx);
 
-    // Saves the state of the current context
-    ctx.save();
     // Returns previously saved path state and attributes
     ctx.restore();
 

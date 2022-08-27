@@ -1,5 +1,5 @@
 class Road {
-    constructor(x, width, laneCount = 4) {
+    constructor(x, width, laneCount = 3) {
         this.x = x;
         this.width = width;
         this.laneCount = laneCount;
@@ -11,12 +11,10 @@ class Road {
         this.top = -infinity;
         this.bottom = infinity;
 
-
         const topLeft = { x: this.left, y: this.top };
         const topRight = { x: this.right, y: this.top };
         const bottomLeft = { x: this.left, y: this.bottom };
         const bottomRight = { x: this.right, y: this.bottom };
-
         this.borders = [
             [topLeft, bottomLeft],
             [topRight, bottomRight]
@@ -27,7 +25,8 @@ class Road {
         const laneWidth = this.width / this.laneCount;
 
         // Limit the position not out of lanes
-        return this.left + laneWidth / 2 + Math.min(laneIndex, this.laneCount - 1) * laneWidth;
+        return this.left + laneWidth / 2 +
+        Math.min(laneIndex, this.laneCount - 1) * laneWidth;
     }
 
 
@@ -49,12 +48,12 @@ class Road {
             ctx.stroke();
         }
         ctx.setLineDash([]);
-        this.borders.forEach(border => {
+        this.borders.forEach(border=>{
             ctx.beginPath();
-            ctx.moveTo(border[0].x, border[0].y);
-            ctx.lineTo(border[1], border[1].y);
+            ctx.moveTo(border[0].x,border[0].y);
+            ctx.lineTo(border[1].x,border[1].y);
             ctx.stroke();
-        })
+        });
     }
 }
 
