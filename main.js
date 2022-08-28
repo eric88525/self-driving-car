@@ -10,11 +10,16 @@ const carCtx = carCanvas.getContext("2d");
 const networkCtx = networkCanvas.getContext("2d");
 
 // objects
-const road = new Road(carCanvas.width / 2, carCanvas.width*0.9);
+const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
 const N = 100;
 
 const cars = generateCars(N);
+
+let bestCar = cars[0];
+if(localStorage.getItem("bestBrain")) {
+    bestCar.brain = JSON.parse(localStorage.getItem("bestBrain"));
+}
 
 const traffic = [
     new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2)
@@ -22,25 +27,39 @@ const traffic = [
 
 animate();
 
-function generateCars(N){
-    const cars=[];
+function generateCars(N) {
+    const cars = [];
 
-    for(let i=0;i<=N;i++){
+    for (let i = 0; i <= N; i++) {
         cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI", 3));
     }
 
     return cars;
 }
 
+function save() {
+    console.log("save");
+    localStorage.setItem("bestBrain",
+        JSON.stringify(bestCar.brain));
+}
+
+function discard() {
+    console.log("discard");
+    localStorage.removeItem("bestBrain");
+}
 
 function animate(time) {
 
-    for(let i=0;i<traffic.length;i++)
+    for (let i = 0; i < traffic.length; i++)
         traffic[i].update(road.borders, []);
 
-    for(let i=0;i<cars.length;i++){
+    for (let i = 0; i < cars.length; i++) {
         cars[i].update(road.borders, traffic);
     }
+
+    const bestCar = cars.find(
+        c => c.y == Math.min(...cars.map(c => c.y))
+    );
 
     carCanvas.height = window.innerHeight;
     networkCanvas.height = window.innerHeight;
@@ -48,28 +67,28 @@ function animate(time) {
     // Saves the state of the current context
     carCtx.save();
     // Let the car stay in the center
-    carCtx.translate(0, -cars[0].y + carCanvas.height*0.7);
+    carCtx.translate(0, -bestCar.y + carCanvas.height * 0.7);
 
     road.draw(carCtx);
 
-    for(let i=0;i<traffic.length;i++){
+    for (let i = 0; i < traffic.length; i++) {
         traffic[i].draw(carCtx, "red");
     }
 
     carCtx.globalAlpha = 0.2;
 
-    for(let i=0;i<cars.length;i++){
+    for (let i = 0; i < cars.length; i++) {
         cars[i].draw(carCtx, "blue");
     }
 
-    carCtx.globalAlpha=1;
+    carCtx.globalAlpha = 1;
 
-    cars[0].draw(carCtx, "blue", true);
+    bestCar.draw(carCtx, "blue", true);
     // Returns previously saved path state and attributes
     carCtx.restore();
 
-    networkCtx.lineDashOffset = -time/50;
+    networkCtx.lineDashOffset = -time / 50;
 
-    Visualizer.drawNetwork(networkCtx, cars[0].brain);
+    Visualizer.drawNetwork(networkCtx, bestCar.brain);
     requestAnimationFrame(animate);
 }
