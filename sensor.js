@@ -3,7 +3,7 @@ class Sensor {
         this.car = car;
         this.rayCount = 5;
         this.rayLength = 150;
-        this.raySpread = Math.PI / 4;
+        this.raySpread = Math.PI / 2;
         this.rays = [];
         // telling if there's a border there or not
         // and how far is now
@@ -33,9 +33,9 @@ class Sensor {
                 ray[1],
                 roadBorders[i][0],
                 roadBorders[i][1]);
-            if (touch) {
+
+            if (touch) 
                 touches.push(touch);
-            }
         }
 
         for (let i = 0; i < traffic.length; i++) {
