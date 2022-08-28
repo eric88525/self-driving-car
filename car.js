@@ -1,5 +1,5 @@
 class Car {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, controlType, maxSpeed) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -7,26 +7,36 @@ class Car {
 
         this.speed = 0;
         this.acceleration = 0.2;
-        this.maxSpeed = 3;
+        this.maxSpeed = maxSpeed;
         this.friction = 0.05;
         this.angle = 0;
         this.damage = false;
-        this.sensor = new Sensor(this);
-        this.controls = new Controls();
+
+        if (controlType != "DUMMY")
+            this.sensor = new Sensor(this);
+
+        this.controls = new Controls(controlType);
     }
 
-    update(roadBorders) {
+    update(roadBorders, traffic) {
         if (!this.damage) {
             this.#move();
             this.polygon = this.#createPolygon();
-            this.damage = this.#assessDamage(roadBorders);
+            this.damage = this.#assessDamage(roadBorders, traffic);
         }
-        this.sensor.update(roadBorders);
+        if (this.sensor)
+            this.sensor.update(roadBorders, traffic);
+
     }
-    // detect collision with roadBorders
-    #assessDamage(roadBorders) {
+    // detect collision with roadBorders and traffic
+    #assessDamage(roadBorders, traffic) {
         for (let i = 0; i < roadBorders.length; i++) {
             if (polyIntersect(this.polygon, roadBorders[i])) {
+                return true;
+            }
+        }
+        for(let i=0;i<traffic.length;i++) {
+            if(polyIntersect(this.polygon, traffic[i].polygon)) {
                 return true;
             }
         }
@@ -75,29 +85,29 @@ class Car {
     }
 
     #move() {
-        if (this.controls.forward) {
+        if (this.controls.forward)
             this.speed += this.acceleration;
-        }
-        if (this.controls.reverse) {
+
+        if (this.controls.reverse)
             this.speed -= this.acceleration;
-        }
+
         // limit max speed
-        if (this.speed > this.maxSpeed) {
+        if (this.speed > this.maxSpeed)
             this.speed = this.maxSpeed;
-        }
+
         // let car reverse not this fast
-        if (this.speed < -this.maxSpeed / 2) {
+        if (this.speed < -this.maxSpeed / 2)
             this.speed = -this.maxSpeed / 2;
-        }
-        if (this.speed > 0) {
+
+        if (this.speed > 0)
             this.speed -= this.friction;
-        }
-        if (this.speed < 0) {
+
+        if (this.speed < 0)
             this.speed += this.friction;
-        }
-        if (Math.abs(this.speed) < this.friction) {
+
+        if (Math.abs(this.speed) < this.friction)
             this.speed = 0;
-        }
+
 
         if (this.speed != 0) {
             const flip = this.speed > 0 ? 1 : -1;
@@ -112,21 +122,24 @@ class Car {
         this.y -= Math.cos(this.angle) * this.speed;
     }
 
-    draw(ctx) {
+    draw(ctx, color) {
 
-        if (this.damage) {
+        if (this.damage)
             ctx.fillStyle = "gray";
-        } else {
-            ctx.fillStyle = "black";
-        }
+        else
+            ctx.fillStyle = color;
+
         ctx.beginPath();
         ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
 
-        for (let i = 1; i < this.polygon.length; i++) {
+        for (let i = 1; i < this.polygon.length; i++)
             ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
-        }
+
         ctx.fill()
-        this.sensor.draw(ctx);
+
+        if (this.sensor)
+            this.sensor.draw(ctx);
+
     }
 }
 
