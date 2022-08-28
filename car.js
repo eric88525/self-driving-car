@@ -14,7 +14,7 @@ class Car {
 
         this.useBrain = controlType == "AI";
 
-        if (controlType != "DUMMY"){
+        if (controlType != "DUMMY") {
             this.sensor = new Sensor(this);
             this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
         }
@@ -28,20 +28,20 @@ class Car {
             this.polygon = this.#createPolygon();
             this.damage = this.#assessDamage(roadBorders, traffic);
         }
-        if (this.sensor){
+        if (this.sensor) {
             this.sensor.update(roadBorders, traffic);
             // The signal will be stronger if the sensor detects an object is closer to the car
-            const offsets=this.sensor.readings.map(
-                s=>s==null?0:1-s.offset
+            const offsets = this.sensor.readings.map(
+                s => s == null ? 0 : 1 - s.offset
             );
             const outputs = NeuralNetwork.feedForward(offsets, this.brain);
             //console.log(outputs);
 
-            if(this.useBrain){
-                this.controls.forward=outputs[0];
-                this.controls.left=outputs[1];
-                this.controls.right=outputs[2];
-                this.controls.reverse=outputs[3];
+            if (this.useBrain) {
+                this.controls.forward = outputs[0];
+                this.controls.left = outputs[1];
+                this.controls.right = outputs[2];
+                this.controls.reverse = outputs[3];
             }
         }
 
@@ -53,8 +53,8 @@ class Car {
                 return true;
             }
         }
-        for(let i=0;i<traffic.length;i++) {
-            if(polyIntersect(this.polygon, traffic[i].polygon)) {
+        for (let i = 0; i < traffic.length; i++) {
+            if (polyIntersect(this.polygon, traffic[i].polygon)) {
                 return true;
             }
         }
@@ -140,7 +140,7 @@ class Car {
         this.y -= Math.cos(this.angle) * this.speed;
     }
 
-    draw(ctx, color) {
+    draw(ctx, color, drawSensors = false) {
 
         if (this.damage)
             ctx.fillStyle = "gray";
@@ -155,9 +155,9 @@ class Car {
 
         ctx.fill()
 
-        if (this.sensor)
+        if (this.sensor && drawSensors) {
             this.sensor.draw(ctx);
-
+        }
     }
 }
 
