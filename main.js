@@ -8,25 +8,37 @@ networkCanvas.width = 300;
 // https://www.w3schools.com/tags/ref_canvas.asp
 const carCtx = carCanvas.getContext("2d");
 const networkCtx = networkCanvas.getContext("2d");
-
 // objects
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
-const N = 1500;
+ALGORITHM = "beamSearch";
 
+const K = 10;
+const N = 1000;
 const cars = generateCars(N);
-
 let bestCar = cars[0];
+let topK = [];
 
 if (localStorage.getItem("bestBrain")) {
-
-
-
-    for (let i = 0; i < cars.length; i++) {
-        cars[i].brain = JSON.parse(
-            localStorage.getItem("bestBrain"));
-        if(i!=0){
-            NeuralNetwork.mutate(cars[i].brain, 0.1);
+    if (ALGORITHM == "beamSearch") {
+        let childCount = N / K;
+        topK = JSON.parse(localStorage.getItem("bestBrain"));
+        for (let i = 0; i < K; i++) {
+            let base = i * childCount;
+            for (let j = 0; j < childCount; j++) {
+                cars[base + j].brain = JSON.parse(JSON.stringify(topK[i]));
+                if (j != 0) {
+                    NeuralNetwork.mutate(cars[base + j].brain, 0.1);
+                }
+            }
+        }
+    } else if (ALGORITHM == "geneticAlgorithm") {
+        for (let i = 0; i < cars.length; i++) {
+            cars[i].brain = JSON.parse(
+                localStorage.getItem("bestBrain"));
+            if (i != 0) {
+                NeuralNetwork.mutate(cars[i].brain, 0.1);
+            }
         }
     }
 }
@@ -41,8 +53,17 @@ const traffic = [
     new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY", 2, getRandomColor()),
 ];
 function save() {
-    localStorage.setItem("bestBrain",
-        JSON.stringify(bestCar.brain));
+    if (ALGORITHM == "beamSearch") {
+        let sortArray = cars.sort(function (a, b) {return a.y - b.y}).slice(0, K);
+        for(let i=0;i<K;i++) {
+            topK[i] = sortArray[i].brain;
+        }
+        localStorage.setItem("bestBrain",
+            JSON.stringify(topK));
+    } else if (ALGORITHM == "geneticAlgorithm") {
+        localStorage.setItem("bestBrain",
+            JSON.stringify(bestCar.brain));
+    }
 }
 
 function discard() {
@@ -67,7 +88,7 @@ function animate(time) {
     for (let i = 0; i < cars.length; i++) {
         cars[i].update(road.borders, traffic);
     }
-
+    
     bestCar = cars.find(
         c => c.y == Math.min(...cars.map(c => c.y))
     );
