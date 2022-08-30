@@ -31,7 +31,7 @@ if (localStorage.getItem("bestBrain")) {
             for (let j = 0; j < childCount; j++) {
                 cars[base + j].brain = JSON.parse(JSON.stringify(topK[i]));
                 if (j != 0) {
-                    NeuralNetwork.mutate(cars[base + j].brain, 0.1);
+                    NeuralNetwork.mutate(cars[base + j].brain, 0.2);
                 }
             }
         }

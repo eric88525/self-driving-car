@@ -1,9 +1,9 @@
 class Sensor {
     constructor(car) {
         this.car = car;
-        this.rayCount = 10;
+        this.rayCount = 7;
         this.rayLength = 150;
-        this.raySpread = Math.PI;
+        this.raySpread = Math.PI/2;
         this.rays = [];
         // telling if there's a border there or not
         // and how far is now
