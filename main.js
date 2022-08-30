@@ -43,7 +43,7 @@ if (localStorage.getItem("bestBrain")) {
     }
 }
 
-const traffic = [
+let traffic = [
     new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2, getRandomColor()),
     new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 2, getRandomColor()),
     new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2, getRandomColor()),
@@ -52,6 +52,36 @@ const traffic = [
     new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 2, getRandomColor()),
     new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY", 2, getRandomColor()),
 ];
+
+// randomly generate traffic
+for (let i = -1000; i > -5000; i -= 450) {
+    traffic = traffic.concat(generateTraffics(i, 5));
+}
+
+function generateTraffics(basePosition, N) {
+    const cars = [];
+    for (let i = 1; i <= N; i++) {
+        cars.push(
+            new Car(
+                road.getLaneCenter(i % 3),
+                basePosition * (1 + Math.abs(Math.random())),
+                30,
+                50,
+                "DUMMY",
+                1 + (1-i%3),
+                getRandomColor()));
+    }
+    return cars;
+}
+
+function generateCars(N) {
+    const cars = [];
+    for (let i = 1; i <= N; i++) {
+        cars.push(new Car(road.getLaneCenter(1), 100, 30, 40, "AI"));
+    }
+    return cars;
+}
+
 function save() {
     if (ALGORITHM == "beamSearch") {
         let sortArray = cars.sort(function (a, b) { return a.y - b.y }).slice(0, K);
@@ -70,15 +100,13 @@ function discard() {
     localStorage.removeItem("bestBrain");
 }
 
+function reload() {
+    location.reload();
+}
+
 animate();
 
-function generateCars(N) {
-    const cars = [];
-    for (let i = 1; i <= N; i++) {
-        cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI"));
-    }
-    return cars;
-}
+
 
 function animate(time) {
 
@@ -104,7 +132,11 @@ function animate(time) {
     road.draw(carCtx);
 
     for (let i = 0; i < traffic.length; i++) {
-        traffic[i].draw(carCtx, "red");
+        if (i > 6) {
+            traffic[i].draw(carCtx);
+        } else {
+            traffic[i].draw(carCtx, "red");
+        }
     }
 
     carCtx.globalAlpha = 0.2;
