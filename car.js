@@ -1,12 +1,12 @@
 class Car {
-    constructor(x, y, width, height, controlType, maxSpeed=2.5) {
+    constructor(x, y, width, height, controlType, maxSpeed = 5) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
         this.speed = 0;
-        this.acceleration = 0.2;
+        this.acceleration = 0.5;
         this.maxSpeed = maxSpeed;
         this.friction = 0.05;
         this.angle = 0;
@@ -16,7 +16,7 @@ class Car {
 
         if (controlType != "DUMMY") {
             this.sensor = new Sensor(this);
-            this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
+            this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 6, 4]);
         }
 
         this.controls = new Controls(controlType);
@@ -27,24 +27,23 @@ class Car {
             this.#move();
             this.polygon = this.#createPolygon();
             this.damage = this.#assessDamage(roadBorders, traffic);
-        }
-        if (this.sensor) {
-            this.sensor.update(roadBorders, traffic);
-            // The signal will be stronger if the sensor detects an object is closer to the car
-            const offsets = this.sensor.readings.map(
-                s => s == null ? 0 : 1 - s.offset
-            );
-            const outputs = NeuralNetwork.feedForward(offsets, this.brain);
-            //console.log(outputs);
+            if (this.sensor) {
+                this.sensor.update(roadBorders, traffic);
+                // The signal will be stronger if the sensor detects an object is closer to the car
+                const offsets = this.sensor.readings.map(
+                    s => s == null ? 0 : 1 - s.offset
+                );
+                const outputs = NeuralNetwork.feedForward(offsets, this.brain);
+                //console.log(outputs);
 
-            if (this.useBrain) {
-                this.controls.forward = outputs[0];
-                this.controls.left = outputs[1];
-                this.controls.right = outputs[2];
-                this.controls.reverse = outputs[3];
+                if (this.useBrain) {
+                    this.controls.forward = outputs[0];
+                    this.controls.left = outputs[1];
+                    this.controls.right = outputs[2];
+                    this.controls.reverse = outputs[3];
+                }
             }
         }
-
     }
     // detect collision with roadBorders and traffic
     #assessDamage(roadBorders, traffic) {
