@@ -1,16 +1,17 @@
 class Car {
-    constructor(x, y, width, height, controlType, maxSpeed = 5) {
+    constructor(x, y, width, height, controlType, maxSpeed = 5, color="red") {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
 
         this.speed = 0;
-        this.acceleration = 0.5;
+        this.acceleration = 0.4;
         this.maxSpeed = maxSpeed;
         this.friction = 0.05;
         this.angle = 0;
         this.damage = false;
+        this.color=color;
 
         this.useBrain = controlType == "AI";
 
@@ -143,8 +144,14 @@ class Car {
 
         if (this.damage)
             ctx.fillStyle = "gray";
-        else
-            ctx.fillStyle = color;
+        else{
+            if(color){
+                ctx.fillStyle = color;
+            }else{
+                ctx.fillStyle = this.color;
+            }
+        }
+            
 
         ctx.beginPath();
         ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
