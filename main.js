@@ -54,23 +54,29 @@ let traffic = [
 ];
 
 // randomly generate traffic
-for (let i = -1000; i > -5000; i -= 450) {
-    traffic = traffic.concat(generateTraffics(i, 5));
+for (let i = -1000; i > -5000; i -= 200) {
+    traffic = traffic.concat(generateTraffics(i, 3));
 }
 
-function generateTraffics(basePosition, N) {
+function generateTraffics(basePosition, roadWidth) {
     const cars = [];
-    for (let i = 1; i <= N; i++) {
+    const arr = [0, 1, 2];
+
+    let randomPosition = getMultipleRandom(arr, 2);
+
+    for (let pos of randomPosition) {
+        console.log(pos);
         cars.push(
             new Car(
-                road.getLaneCenter(i % 3),
-                basePosition * (1 + Math.abs(Math.random())),
+                road.getLaneCenter(pos),
+                basePosition,
                 30,
                 50,
                 "DUMMY",
-                1 + (1-i%3),
+                2,
                 getRandomColor()));
     }
+
     return cars;
 }
 

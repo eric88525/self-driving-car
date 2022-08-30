@@ -32,7 +32,7 @@ function polyIntersect(poly1, poly2) {
                 poly2[j],
                 poly2[(j + 1) % poly2.length]
             )
-            if(touch) {
+            if (touch) {
                 return true;
             }
         }
@@ -40,14 +40,20 @@ function polyIntersect(poly1, poly2) {
     return false;
 }
 
-function getRGBA(value){
-    const alpha=Math.abs(value);
-    const R=value<0?0:255;
-    const G=R;
-    const B=value>0?0:255;
-    return "rgba("+R+","+G+","+B+","+alpha+")";
+function getRGBA(value) {
+    const alpha = Math.abs(value);
+    const R = value < 0 ? 0 : 255;
+    const G = R;
+    const B = value > 0 ? 0 : 255;
+    return "rgba(" + R + "," + G + "," + B + "," + alpha + ")";
 }
-function getRandomColor(){
-    const hue=290+Math.random()*260;
-    return "hsl("+hue+", 100%, 60%)";
+function getRandomColor() {
+    const hue = 290 + Math.random() * 260;
+    return "hsl(" + hue + ", 100%, 60%)";
 }
+
+function getMultipleRandom(arr, num) {
+    const shuffled = [...arr].sort(() => 0.5 - Math.random());
+
+    return shuffled.slice(0, num);
+  }

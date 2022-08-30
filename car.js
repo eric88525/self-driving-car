@@ -6,7 +6,7 @@ class Car {
         this.height = height;
 
         this.speed = 0;
-        this.acceleration = 0.4;
+        this.acceleration = 0.3;
         this.maxSpeed = maxSpeed;
         this.friction = 0.05;
         this.angle = 0;
