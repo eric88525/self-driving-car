@@ -60,9 +60,13 @@ for (let i = -1000; i > -5000; i -= 200) {
 
 function generateTraffics(basePosition, roadWidth) {
     const cars = [];
-    const arr = [0, 1, 2];
+    let arr = [];
 
-    let randomPosition = getMultipleRandom(arr, 2);
+    for(let i=0; i<roadWidth; i++) {
+        arr.push(i)
+    }
+
+    let randomPosition = getMultipleRandom(arr, roadWidth-1);
 
     for (let pos of randomPosition) {
         console.log(pos);
