@@ -19,7 +19,14 @@ class Car {
             this.sensor = new Sensor(this);
             this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 6, 4]);
         }
+        this.img = new Image();
 
+        if(controlType=="AI"){
+            this.img.src = "aiCar.png";
+        }else{
+            this.img.src = "trafficCar.png";
+        }
+       
         this.controls = new Controls(controlType);
     }
 
@@ -142,24 +149,11 @@ class Car {
 
     draw(ctx, color, drawSensors = false) {
 
-        if (this.damage)
-            ctx.fillStyle = "gray";
-        else{
-            if(color){
-                ctx.fillStyle = color;
-            }else{
-                ctx.fillStyle = this.color;
-            }
-        }
-            
-
-        ctx.beginPath();
-        ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
-
-        for (let i = 1; i < this.polygon.length; i++)
-            ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
-
-        ctx.fill()
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(-this.angle);
+        ctx.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
+        ctx.restore();
 
         if (this.sensor && drawSensors) {
             this.sensor.draw(ctx);

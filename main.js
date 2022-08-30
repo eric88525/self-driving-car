@@ -11,6 +11,9 @@ const networkCtx = networkCanvas.getContext("2d");
 // objects
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
+const carWidth = 30;
+const carHeight = 60;
+
 ALGORITHM = "beamSearch";
 
 const K = 5;
@@ -44,17 +47,17 @@ if (localStorage.getItem("bestBrain")) {
 }
 
 let traffic = [
-    new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2, getRandomColor()),
-    new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 2, getRandomColor()),
-    new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2, getRandomColor()),
-    new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY", 2, getRandomColor()),
-    new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY", 2, getRandomColor()),
-    new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 2, getRandomColor()),
-    new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(1), -100, carWidth, carHeight, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(0), -300, carWidth, carHeight, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(2), -300, carWidth, carHeight, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(0), -500, carWidth, carHeight, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(1), -500, carWidth, carHeight, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(1), -700, carWidth, carHeight, "DUMMY", 2, getRandomColor()),
+    new Car(road.getLaneCenter(2), -700, carWidth, carHeight, "DUMMY", 2, getRandomColor()),
 ];
 
 // randomly generate traffic
-for (let i = -1000; i > -5000; i -= 200) {
+for (let i = -1000; i > -10000; i -= 300) {
     traffic = traffic.concat(generateTraffics(i, 3));
 }
 
@@ -74,8 +77,8 @@ function generateTraffics(basePosition, roadWidth) {
             new Car(
                 road.getLaneCenter(pos),
                 basePosition,
-                30,
-                50,
+                carWidth,
+                carHeight,
                 "DUMMY",
                 2,
                 getRandomColor()));
@@ -87,7 +90,7 @@ function generateTraffics(basePosition, roadWidth) {
 function generateCars(N) {
     const cars = [];
     for (let i = 1; i <= N; i++) {
-        cars.push(new Car(road.getLaneCenter(1), 100, 30, 40, "AI"));
+        cars.push(new Car(road.getLaneCenter(1), 100, carWidth, carHeight, "AI"));
     }
     return cars;
 }
@@ -130,6 +133,8 @@ function animate(time) {
     bestCar = cars.find(
         c => c.y == Math.min(...cars.map(c => c.y))
     );
+
+    console.log(bestCar.sensor.readings);
 
     carCanvas.height = window.innerHeight;
     networkCanvas.height = window.innerHeight;
